@@ -115,7 +115,7 @@ var cardArea = {
     }
     if (this.curAnimTime < 0) {this.curAnimTime = 0;}
     if (this.curAnimTime == 0 && this.animationStack.length > 0){
-      for (var i = 0; i < this.animationStack.length; i){
+      while (this.animationStack.length > 0){
         this.flipCard(this.animationStack.pop());
       }
       this.curFlashTime = 0;
@@ -149,6 +149,26 @@ var cardArea = {
       console.log("WINNER!")
     }
 
+  },
+
+  restartGame: function(){
+    var cardAreaDomObj = document.getElementsByClassName("cardArea")[0];
+    console.log(cardAreaDomObj);
+    while (cardAreaDomObj.childNodes.length > 0){
+      console.log(cardAreaDomObj.childNodes[0]);
+      cardAreaDomObj.removeChild(cardAreaDomObj.childNodes[0]);
+    }
+    this.cards = [];
+    this.animationStack = [];
+    this.matchStatus = null;
+    this.curAnimTime = 0;
+    this.curFlashTime = 0;
+    this.currentFlashColor = "rgb(255, 255, 0)";
+    this.prevFlashColor = "rgb(0, 255, 0)";
+    this.curWrong = 0;
+    this.curCorrect = 0;
+    this.endOfGame = false;
+    this.createCardArea(6);
   },
 
   shuffleCards: function(){
