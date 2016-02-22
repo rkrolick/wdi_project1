@@ -18,8 +18,11 @@ var cardArea = {
   maxCorrect: 0,
   curCorrect: 0,
   endOfGame: false,
+  ready: false,
 
-  createCardArea:function(numCards){
+  createGame:function(numCards,numTries){
+    if (this.ready){this.restartGame();}
+    this.maxWrong = numTries;
     if ((numCards % 2) != 0){numCards+=1;}
     var area = document.getElementsByClassName("cardArea")[0];
     for (var i = 0; i < numCards; i++){
@@ -44,6 +47,7 @@ var cardArea = {
     }
     this.maxCorrect = numCards/2;
     this.shuffleCards();
+    this.ready = true;
   },
 
   checkFlip: function(i){
@@ -149,6 +153,8 @@ var cardArea = {
       console.log("WINNER!")
     }
 
+    document.getElementsByTagName("header")[0].style.visibility = "visible"
+
   },
 
   restartGame: function(){
@@ -168,7 +174,7 @@ var cardArea = {
     this.curWrong = 0;
     this.curCorrect = 0;
     this.endOfGame = false;
-    this.createCardArea(6);
+    this.ready = false;
   },
 
   shuffleCards: function(){
@@ -180,5 +186,14 @@ function flip(event){
   cardArea.checkFlip(Number(this.id));
 }
 
+function startGame(event){
+  var numCards = Number(document.getElementById("cardsInDeck").value);
+  var numTries = Number(document.getElementById("numberOfTries").value);
+  if(!isNaN(numCards)&&!isNaN(numTries)) {
+    cardArea.createGame(numCards, numTries);
+    document.getElementsByTagName("header")[0].style.visibility = "hidden";
+  }
+}
+
 setInterval(cardArea.animate.bind(cardArea), 30);
-cardArea.createCardArea(32);
+document.getElementById("startGame").addEventListener("click",startGame);
