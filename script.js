@@ -8,6 +8,7 @@ var cardArea = {
   maxAnimSec: 3,
   faceColor: "rgb(255, 255, 0)",
   backColor: "rgb(0, 0, 255)",
+  outOfPlayColor: "rgb(125, 125, 125)",
   correctFlash: "rgb(0, 255, 0)",
   incorrectFlash: "rgb(255, 0, 0)",
   currentFlashColor: "rgb(255, 255, 0)",
@@ -48,7 +49,16 @@ var cardArea = {
       }
       else{
         this.flipCard(i);
-        this.checkMatch(i, this.matchStatus);
+        if(this.checkMatch(i, this.matchStatus)){
+          this.prevFlashColor = this.correctFlash;
+          // code for correct match
+          this.cards[i].bInPlay = false;
+          this.cards[this.matchStatus].bInPlay = false;
+        }
+        else{
+          this.prevFlashColor = this.incorrectFlash;
+          // code for incorrect match
+        }
         this.animationStack.push(i);
         this.animationStack.push(this.matchStatus);
         this.matchStatus = null;
@@ -60,15 +70,21 @@ var cardArea = {
   },
 
   flipCard: function(i){
-    if(!this.cards[i].bFlipped){
-      this.cards[i].domObj.style.backgroundColor=this.faceColor;
+    if(!this.cards[i].bInPlay){
+      this.cards[i].domObj.style.backgroundColor=this.outOfPlayColor;
       this.cards[i].bFlipped = true;
-      this.cards[i].domObj.appendChild(document.createTextNode(cardArea.cards[i].value));
     }
-    else {
-      this.cards[i].domObj.style.backgroundColor=this.backColor;
-      this.cards[i].bFlipped = false;
-      this.cards[i].domObj.removeChild(this.cards[i].domObj.childNodes[0]);
+    else{
+      if(!this.cards[i].bFlipped){
+        this.cards[i].domObj.style.backgroundColor=this.faceColor;
+        this.cards[i].bFlipped = true;
+        this.cards[i].domObj.appendChild(document.createTextNode(cardArea.cards[i].value));
+      }
+      else {
+        this.cards[i].domObj.style.backgroundColor=this.backColor;
+        this.cards[i].bFlipped = false;
+        this.cards[i].domObj.removeChild(this.cards[i].domObj.childNodes[0]);
+      }
     }
   },
 
@@ -93,6 +109,7 @@ var cardArea = {
         this.flipCard(this.animationStack.pop());
       }
       this.curFlashTime = 0;
+      this.curFlashColor = this.faceColor;
     }
   },
 
@@ -103,8 +120,9 @@ var cardArea = {
     this.prevFlashColor = temp;
   },
 
-  checkMatch: function(){
-
+  checkMatch: function(i, j){
+    if(this.cards[i].value == this.cards[j].value){return true;}
+    else return false;
   },
 
   shuffleCards: function(){
