@@ -13,6 +13,11 @@ var cardArea = {
   incorrectFlash: "rgb(255, 0, 0)",
   currentFlashColor: "rgb(255, 255, 0)",
   prevFlashColor: "rgb(0, 255, 0)",
+  maxWrong: 5,
+  curWrong: 0,
+  maxCorrect: 0,
+  curCorrect: 0,
+  endOfGame: false,
 
   createCardArea:function(numCards){
     if ((numCards % 2) != 0){numCards+=1;}
@@ -37,12 +42,12 @@ var cardArea = {
       }
       this.cards.push(card);
     }
-
+    this.maxCorrect = numCards/2;
     this.shuffleCards();
   },
 
   checkFlip: function(i){
-    if(this.cards[i].bInPlay && this.curAnimTime == 0){
+    if(this.cards[i].bInPlay && this.curAnimTime == 0 && !this.endOfGame){
       if(this.matchStatus == null){
         this.flipCard(i);
         this.matchStatus = i;
@@ -50,14 +55,18 @@ var cardArea = {
       else{
         this.flipCard(i);
         if(this.checkMatch(i, this.matchStatus)){
-          this.prevFlashColor = this.correctFlash;
           // code for correct match
+          this.prevFlashColor = this.correctFlash;
           this.cards[i].bInPlay = false;
           this.cards[this.matchStatus].bInPlay = false;
+          this.curCorrect++;
+          if (this.curCorrect == this.maxCorrect){this.endGame();}
         }
         else{
-          this.prevFlashColor = this.incorrectFlash;
           // code for incorrect match
+          this.prevFlashColor = this.incorrectFlash;
+          this.curWrong++;
+          if (this.curWrong == this.maxWrong){this.endGame();}
         }
         this.animationStack.push(i);
         this.animationStack.push(this.matchStatus);
@@ -73,6 +82,7 @@ var cardArea = {
     if(!this.cards[i].bInPlay){
       this.cards[i].domObj.style.backgroundColor=this.outOfPlayColor;
       this.cards[i].bFlipped = true;
+      if (this.cards[i].domObj.childNodes.length == 0){this.cards[i].domObj.appendChild(document.createTextNode(cardArea.cards[i].value));}
     }
     else{
       if(!this.cards[i].bFlipped){
@@ -123,6 +133,22 @@ var cardArea = {
   checkMatch: function(i, j){
     if(this.cards[i].value == this.cards[j].value){return true;}
     else return false;
+  },
+
+  endGame: function(){
+    this.endOfGame = true;
+    for (var i = 0; i < this.cards.length; i++){
+      this.cards[i].bInPlay = false;
+      this.flipCard(i);
+    }
+
+    if(this.curWrong == this.maxWrong){
+      console.log("LOSER!");
+    }
+    else{
+      console.log("WINNER!")
+    }
+
   },
 
   shuffleCards: function(){
