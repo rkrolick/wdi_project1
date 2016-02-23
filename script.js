@@ -24,29 +24,21 @@ var cardArea = {
     if (this.ready){this.restartGame();}
     this.maxWrong = numTries;
     if ((numCards % 2) != 0){numCards+=1;}
-    var area = document.getElementsByClassName("cardArea")[0];
+    var curVal = 0;
     for (var i = 0; i < numCards; i++){
-
-      //Create DOM objects.
-      div = document.createElement('div');
-      div.className = "card";
-      area.appendChild(div);
-      div.setAttribute("id", i);
-      div.addEventListener("click", flip);
-
       // Create cardArea Objects.
-      var curVal;
-      if((i%2) == 0){curVal=i;}else{curVal=i-1;}
+      if((i%2) == 0){curVal++;}
       var card = {
         bInPlay: true,
         bFlipped: false,
-        domObj: div,
+        domObj: null,
         value: curVal
       }
       this.cards.push(card);
     }
     this.maxCorrect = numCards/2;
     this.shuffleCards();
+    this.createDomObjects();
     this.ready = true;
   },
 
@@ -103,7 +95,6 @@ var cardArea = {
   },
 
   animate: function(){
-    //console.log(this);
     if (this.curAnimTime > 0){
        this.curAnimTime -= 30;
        this.curFlashTime -= 30;
@@ -159,9 +150,7 @@ var cardArea = {
 
   restartGame: function(){
     var cardAreaDomObj = document.getElementsByClassName("cardArea")[0];
-    console.log(cardAreaDomObj);
     while (cardAreaDomObj.childNodes.length > 0){
-      console.log(cardAreaDomObj.childNodes[0]);
       cardAreaDomObj.removeChild(cardAreaDomObj.childNodes[0]);
     }
     this.cards = [];
@@ -178,7 +167,31 @@ var cardArea = {
   },
 
   shuffleCards: function(){
+    function getRand(num) {return (Math.round(Math.random() * num));}
+    var tempDeck = [];
+    var usedIndexes = [];
+    var rand = getRand(this.cards.length-1);
 
+    for (i=0; i<this.cards.length; i++){
+      while(usedIndexes.indexOf(rand)>-1){
+        rand = getRand(this.cards.length-1);
+      }
+      tempDeck.push(this.cards[rand]);
+      usedIndexes.push(rand);
+    }
+    this.cards = tempDeck;
+  },
+
+  createDomObjects: function(){
+    var area = document.getElementsByClassName("cardArea")[0];
+    for(var i = 0; i < this.cards.length; i++){
+      div = document.createElement('div');
+      div.className = "card";
+      area.appendChild(div);
+      div.setAttribute("id", i);
+      div.addEventListener("click", flip);
+      this.cards[i].domObj = div;
+    }
   }
 }
 
