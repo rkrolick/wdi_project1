@@ -1,20 +1,36 @@
 body {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  background-color: grey;
 }
 
 .cardArea {
+  width: 1800px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  padding-right: 60px;
+  padding-bottom: 60px;
+  background-color: white;
 }
 
 .card {
-  height: 80px;
-  width: 60px;
+  height: 180px;
+  width: 120px;
   background-color: blue;
-  margin: 10px;
+  margin-left: 60px;
+  margin-top: 60px;
   font-size: 50px;
   text-align: center;
   vertical-align: middle;
+}
+
+.player{
+  height: 60px;
+  width: 60px;
+  background-color: pink;
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
