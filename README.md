@@ -4,6 +4,7 @@ Use W,A,S,D to move the player (green square), click on a card to select it.
 You must be adjacent to the card to select it.
 Avoid the enemy (red square).
 The game ends if you correctly find all the cards, or if the enemy catches you.
+
 ---
 
 ### Technology Used
