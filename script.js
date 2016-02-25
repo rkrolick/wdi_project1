@@ -534,7 +534,7 @@ function initGame(){
   matches = 0;
   var endScreen = document.getElementsByClassName("endScreen")[0];
   endScreen.style.visibility = "hidden";
-  gameCards.buildDeck(false);
+  gameCards.buildDeck(true);
   collisionGrid.buildGrid();
   player.init();
   enemy.init();
