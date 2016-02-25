@@ -48,3 +48,20 @@ body {
   top: 0px;
   left: 0px;
 }
+
+.endScreen {
+  width: 1860px;
+  height: 780px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  top: 8px;
+  left: 30px;
+  background-color: white;
+}
+
+.endScreen p{
+  font-size: 200px
+
+}

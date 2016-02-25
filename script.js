@@ -15,7 +15,7 @@ var P_START_Y = 0;
 var P_OFFSET_X = 30; // TODO: Find a way to calculate this dynamically based on view port.
 var P_OFFSET_Y = 8; // TODO: Find a way to calculate this dynamically based on view port.
 var P_SIZE = 60;
-var P_SPEED = 6;
+var P_SPEED = 15;
 
 // Enemy constants
 var E_START_X = 1800;
@@ -29,6 +29,9 @@ var NODE_SIZE = 60;
 
 // GameCards constants
 var CARD_AMOUNT = 30;
+
+// Game Loop globals
+var matches = 0;
 
 //////////////////////////////////////////////////
 // Declare global variables used by game logic. //
@@ -259,7 +262,6 @@ var collisionGrid = {
     if ((nodeNumber >= 0) && (nodeNumber < (this.length * this.height))){
       var y = nodeNumber%this.length;
       var x = (nodeNumber - y) /this.length;
-      console.log("grid:" +x+ ", " +y);
       return this.grid[x][y];
     }
     return 666;
@@ -291,7 +293,7 @@ var flashingCards = {
 var gameCards = {
   deck: [], // Index of an individual card corresponds to the id of DOM object of class card.
   previousGuess: null, // Keeps tabs on the 1st guess of a pair, via a number that corresponds to an index of the cards array.  If null, a guess has not been made.
-  cardTypes: ["e","p","a","b","f","w"], // Defines possible card types.  Elevator needs to be first in the array and powercell second for correct game logic.
+  cardTypes: ["1","1","2","3","4","5"], // Defines possible card types.  Elevator needs to be first in the array and powercell second for correct game logic.
   typeAmounts: [ 1, 5, 2, 10, 10, 2], // Each index corresponds with index in cardTypes array, specifying amount to distribute.  Items need to total totalCards for correct game logic.
   totalCards: CARD_AMOUNT, // Defines how many cards are displayed.
   bFlashing: false, // Flag that forces selectCard to ignore user input.  Used if an animation needs to be updated before user input can be processed.
@@ -349,6 +351,7 @@ var gameCards = {
       this.deck[i].bActive = false;
       this.deck[j].bActive = false;
       flashingCards.matchType = this.deck[i].type;
+      matches++;
       return;
     }
     // Check for a elevator and powercell match. If found, deactive the cards.
@@ -357,6 +360,7 @@ var gameCards = {
         this.deck[i].bActive = false;
         this.deck[j].bActive = false;
         flashingCards.matchType = this.cardTypes[0];
+        matches ++;
         return;
       }
     }
@@ -488,16 +492,36 @@ function gameLoop(){
   updateFlashing();
   display();
   enemy.decideMove();
+  if (matches == 15){endGame();}
   gameTime += 30;
+}
+
+function endGame(){
+  KILL = true;
+  score = 500000 - gameTime;
+  var endScreen = document.getElementsByClassName("endScreen")[0];
+  endScreen.appendChild(document.createTextNode("YOU WIN!"));
+  endScreen.appendChild(document.createTextNode("YOUR SCORE: " + score));
+  endScreen.style.visibility = "visible";
+  document.getElementsByClassName("restart")[0].addEventListener("click", function(e){initGame();})
+}
+
+function initGame(){
+  KILL = false;
+  matches = 0;
+  var endScreen = document.getElementsByClassName("endScreen")[0];
+  endScreen.style.visibility = "hidden";
+  gameCards.buildDeck(false);
+  collisionGrid.buildGrid();
+  player.init();
+  enemy.init();
+
 }
 
 ///////////////////////////
 // Game Loop begins here //
 ///////////////////////////
 window.addEventListener("keydown", movePlayer);
-gameCards.buildDeck(true);
-collisionGrid.buildGrid();
-player.init();
-enemy.init();
+initGame();
 buildDOM();
 setInterval(gameLoop, 30);
