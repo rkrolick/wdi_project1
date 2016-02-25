@@ -191,7 +191,6 @@ var enemy = {
 
   updateGridPos: function(){
     this.onNode = collisionGrid.getNode(this.x , this.y);
-    console.log(this.onNode);
   },
 
 
@@ -540,6 +539,9 @@ function initGame(){
   score = 0;
   var endScreen = document.getElementsByClassName("endScreen")[0];
   endScreen.style.visibility = "hidden";
+
+  // TODO doesnt work.
+  if(endScreen.childNodes.length>1){endScreen.removeChild(endScreen.childNodes.length); endScreen.removeChild(endScreen.childNodes.length)}
   gameCards.buildDeck(true);
   collisionGrid.buildGrid();
   player.init();
