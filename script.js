@@ -60,6 +60,8 @@ var player = {
 
   // Initialize player
   init: function(){
+    this.x = P_START_X;
+    this.y = P_START_Y;
     this.updateGridPos();
   },
 
@@ -144,8 +146,9 @@ var enemy = {
 
   // Initialize enemy
   init: function(){
+    this.x = E_START_X;
+    this.y = E_START_Y;
     this.updateGridPos();
-    console.log(this.onNode);
   },
 
   // Updates enemy position data based on input recieved.
@@ -372,11 +375,13 @@ var gameCards = {
       this.deck[i].bActive = false;
       this.deck[j].bActive = false;
       flashingCards.matchType = this.deck[i].type;
+      score += this.deck[i].type * 1000 ;
       matches++;
+
       return;
     }
     // Check for a elevator and powercell match. If found, deactive the cards.
-    if ((this.deck[i].type == this.cardTypes[0]) || (this.deck[i].type == this.cardTypes[1])){
+    /*if ((this.deck[i].type == this.cardTypes[0]) || (this.deck[i].type == this.cardTypes[1])){
       if ((this.deck[j].type == this.cardTypes[0]) || (this.deck[j].type == this.cardTypes[1])){
         this.deck[i].bActive = false;
         this.deck[j].bActive = false;
@@ -384,7 +389,7 @@ var gameCards = {
         matches ++;
         return;
       }
-    }
+    }*/
     // No match found.
     flashingCards.matchType = 0;
   },
@@ -514,24 +519,25 @@ function gameLoop(){
   updateFlashing();
   display();
   enemy.decideMove();
-  if (player.onNode == enemy.onNode){endGame("lose");}
-  if (matches == 15){endGame("win");}
+  if (player.onNode == enemy.onNode){endGame("lose");}  // checks for player & enemy collision
+  if (matches == 15){endGame("win");} // Checks if all cards have been matched
   gameTime += 30;
 }
 
 function endGame(status){
   KILL = true;
-  score = 500000 - gameTime;
+  if (status = "win"){score += 500000 - gameTime;}
   var endScreen = document.getElementsByClassName("endScreen")[0];
+  endScreen.style.visibility = "visible";
   endScreen.appendChild(document.createTextNode("YOU " + status + "!"));
   endScreen.appendChild(document.createTextNode("YOUR SCORE: " + score));
-  endScreen.style.visibility = "visible";
-  document.getElementsByClassName("restart")[0].addEventListener("click", function(e){initGame();})
 }
 
 function initGame(){
   KILL = false;
+  gameTime = 0;
   matches = 0;
+  score = 0;
   var endScreen = document.getElementsByClassName("endScreen")[0];
   endScreen.style.visibility = "hidden";
   gameCards.buildDeck(true);
