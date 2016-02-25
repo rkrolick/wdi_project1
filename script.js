@@ -95,16 +95,25 @@ var player = {
         corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size-1, this.y+this.size));
         if ((corner1 == null && corner2 == null)){return false;} else {return true;}
 
-      case ("left"):
-        corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x-1, this.y));
-        corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y));
-        if ((corner1 == null && corner2 == null)){return false;} else {return true;}
+        case ("left"):
+        if(this.onNode == 0  || this.onNode == 372 || this.onNode == 341 || this.onNode == 310 ||  // TODO: quick hack to make collision dectection work on left & right
+          this.onNode == 279 || this.onNode == 248 || this.onNode == 217 || this.onNode == 186 ||  // edges of game area.
+          this.onNode == 155 || this.onNode == 124 || this.onNode == 93  || this.onNode == 62  ||
+          this.onNode == 31){return(true);}
+          if (this.onNode == 402){return(false);}
+          corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x-1, this.y));
+          corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y));
+          if ((corner1 == null && corner2 == null)){return false;} else {return true;}
 
-      case ("right"):
-        corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y));
-        corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y+this.size-1));
-        if ((corner1 == null && corner2 == null)){return false;} else {return true;}
-      default: return true;
+        case ("right"):
+          if(this.onNode == 402 || this.onNode == 371 || this.onNode == 340 || this.onNode == 309 ||  // TODO: quick hack to make collision dectection work on left & right
+            this.onNode == 278  || this.onNode == 247 || this.onNode == 216 || this.onNode == 185 ||  // edges of game area.
+            this.onNode == 154 || this.onNode == 123 || this.onNode == 92  || this.onNode == 61   ||
+            this.onNode == 30){return(true);}
+          corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y));
+          corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y+this.size-1));
+          if ((corner1 == null && corner2 == null)){return false;} else {return true;}
+        default: return true;
     }
   },
 
@@ -133,12 +142,13 @@ var enemy = {
   speed: E_SPEED,
   previousMove: "up",
 
-  // Initialize player
+  // Initialize enemy
   init: function(){
     this.updateGridPos();
+    console.log(this.onNode);
   },
 
-  // Updates player position data based on input recieved.
+  // Updates enemy position data based on input recieved.
   move: function(direction){
     if(this.checkCollision(direction)){return;}
     switch (direction){
@@ -147,13 +157,14 @@ var enemy = {
       case ("left"): this.x -= this.speed; break;
       case ("right"): this.x += this.speed; break;
     }
-
+    this.previousMove = direction;
     this.updateGridPos();
   },
 
   decideMove: function(){
-    if(collisionGrid.isAligned(this.x, this.y)){this.previousNode = this.chooseNode(); this.move(this.previousNode);}
-    else{this.move(this.previousNode);}
+    if(collisionGrid.isAligned(this.x, this.y)){
+      this.move(this.chooseNode());}
+    else{this.move(this.previousMove);}
     //if(collisionGrid.valueAt(this.onNode-1)==null){this.previousMove = "left"; this.move("left"); return;}
     //this.move("right"); return;
     //if(collisionGrid.valueAt(this.onNode-31)==null){this.previousMove = "up"; this.move("up");}
@@ -163,11 +174,11 @@ var enemy = {
   chooseNode: function(){
     function getRand(num) {return (Math.round(Math.random() * (num-1)));}
     switch (getRand(4)){
-      case (0): if(collisionGrid.valueAt(this.onNode-31)==null){return "up";}
-      case (1): if(collisionGrid.valueAt(this.onNode-1)==null){return "left";}
-      case (2): if(collisionGrid.valueAt(this.onNode+1)==null){return "right";}
-      case (3): if(collisionGrid.valueAt(this.onNode+31)==null){return "down";}
-      default: return "up";
+    case (0): return "up";
+    case (1): return "left";
+    case (2): return "right";
+    case (3): return "down";
+    default: return "up";
     }
     //if(collisionGrid.valueAt(onNode-31)==null){return "up";}//above
     //collisionGrid.valueAt(onNode+31) //below
@@ -177,6 +188,7 @@ var enemy = {
 
   updateGridPos: function(){
     this.onNode = collisionGrid.getNode(this.x , this.y);
+    console.log(this.onNode);
   },
 
 
@@ -197,11 +209,20 @@ var enemy = {
         if ((corner1 == null && corner2 == null)){return false;} else {return true;}
 
       case ("left"):
+      if(this.onNode == 0  || this.onNode == 372 || this.onNode == 341 || this.onNode == 310 ||  // TODO: quick hack to make collision dectection work on left & right
+        this.onNode == 279 || this.onNode == 248 || this.onNode == 217 || this.onNode == 186 ||  // edges of game area.
+        this.onNode == 155 || this.onNode == 124 || this.onNode == 93  || this.onNode == 62  ||
+        this.onNode == 31){return(true);}
+        if (this.onNode == 402){return(false);}
         corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x-1, this.y));
         corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y));
         if ((corner1 == null && corner2 == null)){return false;} else {return true;}
 
       case ("right"):
+        if(this.onNode == 402 || this.onNode == 371 || this.onNode == 340 || this.onNode == 309 ||  // TODO: quick hack to make collision dectection work on left & right
+          this.onNode == 278  || this.onNode == 247 || this.onNode == 216 || this.onNode == 185 ||  // edges of game area.
+          this.onNode == 154 || this.onNode == 123 || this.onNode == 92  || this.onNode == 61   ||
+          this.onNode == 30){return(true);}
         corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y));
         corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y+this.size-1));
         if ((corner1 == null && corner2 == null)){return false;} else {return true;}
@@ -419,6 +440,7 @@ function movePlayer(event){
     case (83): player.move("down"); break;
     case (65): player.move("left"); break;
     case (68): player.move("right"); break;
+    case (80) : matches=15;break; // Dev use to test winScreen (P)
   }
 }
 
@@ -492,15 +514,16 @@ function gameLoop(){
   updateFlashing();
   display();
   enemy.decideMove();
-  if (matches == 15){endGame();}
+  if (player.onNode == enemy.onNode){endGame("lose");}
+  if (matches == 15){endGame("win");}
   gameTime += 30;
 }
 
-function endGame(){
+function endGame(status){
   KILL = true;
   score = 500000 - gameTime;
   var endScreen = document.getElementsByClassName("endScreen")[0];
-  endScreen.appendChild(document.createTextNode("YOU WIN!"));
+  endScreen.appendChild(document.createTextNode("YOU " + status + "!"));
   endScreen.appendChild(document.createTextNode("YOUR SCORE: " + score));
   endScreen.style.visibility = "visible";
   document.getElementsByClassName("restart")[0].addEventListener("click", function(e){initGame();})
@@ -522,6 +545,7 @@ function initGame(){
 // Game Loop begins here //
 ///////////////////////////
 window.addEventListener("keydown", movePlayer);
+document.getElementsByClassName("restart")[0].addEventListener("click", function(e){initGame();})
 initGame();
 buildDOM();
 setInterval(gameLoop, 30);
