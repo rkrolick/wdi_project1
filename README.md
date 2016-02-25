@@ -24,7 +24,7 @@ hindered functional implementation of this goal.
 
 ### Installation
 
-Either goto: [https://github.com/ga-dc/wdi8/blob/master/asking-for-help.md](https://github.com/ga-dc/wdi8/blob/master/asking-for-help.md)
+Either goto: [http://rkrolick.github.io/wdi_project1/](http://rkrolick.github.io/wdi_project1/)
 
 Or goto: [https://github.com/rkrolick/wdi_project1](https://github.com/rkrolick/wdi_project1)
 Download files to local repository.
