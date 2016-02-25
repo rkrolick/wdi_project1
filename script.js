@@ -526,7 +526,7 @@ function gameLoop(){
 
 function endGame(status){
   KILL = true;
-  if (status == "win"){score += 500000 - gameTime;}
+  if (status == "win"){if ((60000 - gameTime) < 10000){score+=10000;}else{score+=60000-gameTime;}}
   var endScreen = document.getElementsByClassName("endScreen")[0];
   endScreen.style.visibility = "visible";
   endScreen.appendChild(document.createTextNode("YOU " + status + "!"));
