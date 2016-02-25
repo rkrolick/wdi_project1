@@ -9,13 +9,18 @@ var CARD_INACTIVE_COLOR = "rgb(125, 125, 125)";
 var CORRECT_FLASH_COLOR = "rgb(0, 255, 0)";
 var INCORRECT_FLASH_COLOR = "rgb(255, 0, 0)";
 
-// Player constants
+// Player & Enemy constants
 var P_START_X = 0;
 var P_START_Y = 0;
 var P_OFFSET_X = 30; // TODO: Find a way to calculate this dynamically based on view port.
 var P_OFFSET_Y = 8; // TODO: Find a way to calculate this dynamically based on view port.
 var P_SIZE = 60;
 var P_SPEED = 6;
+
+// Enemy constants
+var E_START_X = 1800;
+var E_START_Y = 720 ;
+var E_SPEED = 6;
 
 // CollisionGrid constants
 var GRID_LENGTH = 31;
@@ -114,6 +119,107 @@ var player = {
   }
 }
 
+// Keeps track of enemy data.
+var enemy = {
+  x: E_START_X,
+  y: E_START_Y,
+  xOffset: P_OFFSET_X,  // Used by display functon to correctly position player based the offset of cardArea.
+  yOffset: P_OFFSET_Y, // Used by display functon to correctly position player based the offset of cardArea.
+  onNode: null,
+  size: P_SIZE,
+  speed: E_SPEED,
+  previousMove: "up",
+
+  // Initialize player
+  init: function(){
+    this.updateGridPos();
+  },
+
+  // Updates player position data based on input recieved.
+  move: function(direction){
+    if(this.checkCollision(direction)){return;}
+    switch (direction){
+      case ("up"): this.y -= this.speed; break;
+      case ("down"): this.y += this.speed; break;
+      case ("left"): this.x -= this.speed; break;
+      case ("right"): this.x += this.speed; break;
+    }
+
+    this.updateGridPos();
+  },
+
+  decideMove: function(){
+    if(collisionGrid.isAligned(this.x, this.y)){this.previousNode = this.chooseNode(); this.move(this.previousNode);}
+    else{this.move(this.previousNode);}
+    //if(collisionGrid.valueAt(this.onNode-1)==null){this.previousMove = "left"; this.move("left"); return;}
+    //this.move("right"); return;
+    //if(collisionGrid.valueAt(this.onNode-31)==null){this.previousMove = "up"; this.move("up");}
+
+  },
+
+  chooseNode: function(){
+    function getRand(num) {return (Math.round(Math.random() * (num-1)));}
+    switch (getRand(4)){
+      case (0): if(collisionGrid.valueAt(this.onNode-31)==null){return "up";}
+      case (1): if(collisionGrid.valueAt(this.onNode-1)==null){return "left";}
+      case (2): if(collisionGrid.valueAt(this.onNode+1)==null){return "right";}
+      case (3): if(collisionGrid.valueAt(this.onNode+31)==null){return "down";}
+      default: return "up";
+    }
+    //if(collisionGrid.valueAt(onNode-31)==null){return "up";}//above
+    //collisionGrid.valueAt(onNode+31) //below
+    //collisionGrid.valueAt(onNode-1)  // left
+    //collisionGrid.valueAt(onNode+1)  //right
+  },
+
+  updateGridPos: function(){
+    this.onNode = collisionGrid.getNode(this.x , this.y);
+  },
+
+
+
+  checkCollision: function(direction){
+    var corner1;
+    var corner2;
+
+    switch (direction){
+      case ("up"):
+        corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x, this.y-1));
+        corner2= collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size-1, this.y-1));
+        if ((corner1 == null && corner2 == null)){return false;} else {return true;}
+
+      case ("down"):
+        corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x, this.y+this.size));
+        corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size-1, this.y+this.size));
+        if ((corner1 == null && corner2 == null)){return false;} else {return true;}
+
+      case ("left"):
+        corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x-1, this.y));
+        corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y));
+        if ((corner1 == null && corner2 == null)){return false;} else {return true;}
+
+      case ("right"):
+        corner1 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y));
+        corner2 = collisionGrid.valueAt(collisionGrid.getNode(this.x+this.size, this.y+this.size-1));
+        if ((corner1 == null && corner2 == null)){return false;} else {return true;}
+      default: return true;
+    }
+  },
+
+  adjacentCards: function(){
+    var adjCards = [];
+
+    adjCards.push(collisionGrid.valueAt(this.onNode - collisionGrid.length)); // above
+    adjCards.push(collisionGrid.valueAt(this.onNode + collisionGrid.length)); // below
+    adjCards.push(collisionGrid.valueAt(this.onNode + 1)); // right TODO: technically doesnt give correct results
+    adjCards.push(collisionGrid.valueAt(this.onNode - 1)); // left TODO: technically doesnt give correct results
+
+    return adjCards;
+
+
+  }
+}
+
 // Organizes the game space into nodes to check for object interactions/collisions
 var collisionGrid = {
   grid: [],
@@ -150,12 +256,17 @@ var collisionGrid = {
 
   // Returns the value of a node specified by nodeNumber
   valueAt: function(nodeNumber){
-    if ((nodeNumber >= 0) && (nodeNumber <= (this.length * this.height))){
+    if ((nodeNumber >= 0) && (nodeNumber < (this.length * this.height))){
       var y = nodeNumber%this.length;
       var x = (nodeNumber - y) /this.length;
+      console.log("grid:" +x+ ", " +y);
       return this.grid[x][y];
     }
     return 666;
+  },
+
+  isAligned: function(x, y){
+    if (((x % 60) == 0) && ((y % 60) == 0)) {return true;}else{return false;}
   }
 
 }
@@ -364,6 +475,8 @@ function display(){
   //Ends display of cards
   document.getElementsByClassName("player")[0].style.top = player.y + player.yOffset + "px";
   document.getElementsByClassName("player")[0].style.left = player.x + player.xOffset + "px";
+  document.getElementsByClassName("enemy")[0].style.top = enemy.y + enemy.yOffset + "px";
+  document.getElementsByClassName("enemy")[0].style.left = enemy.x + enemy.xOffset + "px";
 }
 
 
@@ -374,6 +487,7 @@ function gameLoop(){
   updateDomDisplay();
   updateFlashing();
   display();
+  enemy.decideMove();
   gameTime += 30;
 }
 
@@ -384,5 +498,6 @@ window.addEventListener("keydown", movePlayer);
 gameCards.buildDeck(true);
 collisionGrid.buildGrid();
 player.init();
+enemy.init();
 buildDOM();
 setInterval(gameLoop, 30);

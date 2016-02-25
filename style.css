@@ -34,7 +34,16 @@ body {
 .player{
   height: 60px;
   width: 60px;
-  background-color: pink;
+  background-color: green;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.enemy{
+  height: 60px;
+  width: 60px;
+  background-color: red;
   position: absolute;
   top: 0px;
   left: 0px;
