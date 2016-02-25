@@ -324,6 +324,7 @@ var gameCards = {
   // Builds deck based on the types and distrubution defined by the cardTypes & typeAmounts arrays.
   buildDeck: function(shuffle){
     // Variables needed to iterate type/amount arrays
+    this.deck = [];
     var typePos = 0;
     while(this.deck.length < this.totalCards ){
       for(var i = 0; i < this.typeAmounts[typePos]; i++){
@@ -525,7 +526,7 @@ function gameLoop(){
 
 function endGame(status){
   KILL = true;
-  if (status = "win"){score += 500000 - gameTime;}
+  if (status == "win"){score += 500000 - gameTime;}
   var endScreen = document.getElementsByClassName("endScreen")[0];
   endScreen.style.visibility = "visible";
   endScreen.appendChild(document.createTextNode("YOU " + status + "!"));
@@ -541,11 +542,13 @@ function initGame(){
   endScreen.style.visibility = "hidden";
 
   // TODO doesnt work.
-  if(endScreen.childNodes.length>1){endScreen.removeChild(endScreen.childNodes.length); endScreen.removeChild(endScreen.childNodes.length)}
+  //if(endScreen.childNodes.length>1){endScreen.removeChild(endScreen.childNodes.length); endScreen.removeChild(endScreen.childNodes.length);}
+
   gameCards.buildDeck(true);
   collisionGrid.buildGrid();
   player.init();
   enemy.init();
+
 
 }
 
@@ -556,4 +559,5 @@ window.addEventListener("keydown", movePlayer);
 document.getElementsByClassName("restart")[0].addEventListener("click", function(e){initGame();})
 initGame();
 buildDOM();
+
 setInterval(gameLoop, 30);
