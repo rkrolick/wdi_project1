@@ -9,6 +9,7 @@ The game ends if you correctly find all the cards, or if the enemy catches you.
 ### Technology Used
 
 Javascript, HTML, and CSS.
+
 ---
 
 ### Approach:
@@ -17,6 +18,7 @@ Attempted to create various objects to govern game rules. Objects are called by 
 gameLoop function, which is set by interval to be called every 33 milliseconds.  The
 code was meant to be flexible, configured by global constants, but time constraints
 hindered functional implementation of this goal.
+
 ---
 
 ### Installation
@@ -28,6 +30,7 @@ Download files to local repository.
 Open index.html in Chrome.
 
 This game has only been tested in Chrome.
+
 ---
 
 ### Known issues:  
@@ -38,6 +41,7 @@ the enemy isn't smartly advancing on the player.
 Resizing the screen to less than 1080 causes display issues.
 
 Score information does not display well after more than one playthrough of the game.
+
 ---
 
 ### User Stories
