@@ -2,6 +2,7 @@
 // Declare constants used by game logic.//
 //////////////////////////////////////////
 
+// NHO: would it make more sense to move this to classes in CSS that you could then manipulate with js?
 // Card Display constants
 var CARD_FACE_COLOR = "rgb(255, 255, 0)";
 var CARD_BACK_COLOR = "rgb(0, 0, 255)";
@@ -51,7 +52,7 @@ var player = {
   xOffset: P_OFFSET_X,  // Used by display functon to correctly position player based the offset of cardArea.
   yOffset: P_OFFSET_Y, // Used by display functon to correctly position player based the offset of cardArea.
   //gridX: null,
-  //gridY: null,
+  //gridY: null, // NHO: reminder to remove commented out / unused code
   onNode: null,
   //transitionNode: null, // When moving between Nodes  account for both.
   bInLineWithGrid: true,
@@ -60,13 +61,14 @@ var player = {
 
   // Initialize player
   init: function(){
-    this.x = P_START_X;
+    this.x = P_START_X; // NHO: how is this different than the initial values you declare on lines 50 and 51
     this.y = P_START_Y;
     this.updateGridPos();
   },
 
   // Updates player position data based on input recieved.
   move: function(direction){
+    // NHO: very clean implementation!
     if(this.checkCollision(direction)){return;}
     switch (direction){
       case ("up"): this.y -= this.speed; break;
@@ -128,8 +130,6 @@ var player = {
     adjCards.push(collisionGrid.valueAt(this.onNode - 1)); // left TODO: technically doesnt give correct results
 
     return adjCards;
-
-
   }
 }
 
@@ -168,10 +168,10 @@ var enemy = {
     if(collisionGrid.isAligned(this.x, this.y)){
       this.move(this.chooseNode());}
     else{this.move(this.previousMove);}
+    // NHO: reminder to remove unused / commented out code
     //if(collisionGrid.valueAt(this.onNode-1)==null){this.previousMove = "left"; this.move("left"); return;}
     //this.move("right"); return;
     //if(collisionGrid.valueAt(this.onNode-31)==null){this.previousMove = "up"; this.move("up");}
-
   },
 
   chooseNode: function(){
@@ -183,6 +183,7 @@ var enemy = {
     case (3): return "down";
     default: return "up";
     }
+    // NHO: reminder to remove unused / commented out code
     //if(collisionGrid.valueAt(onNode-31)==null){return "up";}//above
     //collisionGrid.valueAt(onNode+31) //below
     //collisionGrid.valueAt(onNode-1)  // left
@@ -192,8 +193,6 @@ var enemy = {
   updateGridPos: function(){
     this.onNode = collisionGrid.getNode(this.x , this.y);
   },
-
-
 
   checkCollision: function(direction){
     var corner1;
@@ -211,6 +210,7 @@ var enemy = {
         if ((corner1 == null && corner2 == null)){return false;} else {return true;}
 
       case ("left"):
+      /// NHO: how could we simplify this? i.e. if this.x == 0 (or make a function for this)
       if(this.onNode == 0  || this.onNode == 372 || this.onNode == 341 || this.onNode == 310 ||  // TODO: quick hack to make collision dectection work on left & right
         this.onNode == 279 || this.onNode == 248 || this.onNode == 217 || this.onNode == 186 ||  // edges of game area.
         this.onNode == 155 || this.onNode == 124 || this.onNode == 93  || this.onNode == 62  ||
@@ -221,6 +221,7 @@ var enemy = {
         if ((corner1 == null && corner2 == null)){return false;} else {return true;}
 
       case ("right"):
+        // NHO: how could we simplify this? i.e. if this.x + this.size == board.width return true (make into a function) (isAtEdge())
         if(this.onNode == 402 || this.onNode == 371 || this.onNode == 340 || this.onNode == 309 ||  // TODO: quick hack to make collision dectection work on left & right
           this.onNode == 278  || this.onNode == 247 || this.onNode == 216 || this.onNode == 185 ||  // edges of game area.
           this.onNode == 154 || this.onNode == 123 || this.onNode == 92  || this.onNode == 61   ||
@@ -241,8 +242,6 @@ var enemy = {
     adjCards.push(collisionGrid.valueAt(this.onNode - 1)); // left TODO: technically doesnt give correct results
 
     return adjCards;
-
-
   }
 }
 
@@ -287,13 +286,14 @@ var collisionGrid = {
       var x = (nodeNumber - y) /this.length;
       return this.grid[x][y];
     }
+    // NHO: should be an error code? ERROR_CODE = 666
+    // if blah === ERROR_CODE
     return 666;
   },
 
   isAligned: function(x, y){
     if (((x % 60) == 0) && ((y % 60) == 0)) {return true;}else{return false;}
   }
-
 }
 
 // keeps track of cards that are flashing.
@@ -380,6 +380,7 @@ var gameCards = {
 
       return;
     }
+    // NHO: this would be a cool feature, would recommend moving this code to another branch to experiment on
     // Check for a elevator and powercell match. If found, deactive the cards.
     /*if ((this.deck[i].type == this.cardTypes[0]) || (this.deck[i].type == this.cardTypes[1])){
       if ((this.deck[j].type == this.cardTypes[0]) || (this.deck[j].type == this.cardTypes[1])){
@@ -395,20 +396,19 @@ var gameCards = {
   },
 
   shuffleCards: function(){
-  function getRand(num) {return (Math.round(Math.random() * (num-1)));}
-  var tempDeck = [];
-  var usedIndexes = [];
-  var rand = getRand(this.totalCards);
-
-  for (var i = 0; i < this.totalCards; i++){
-    while(usedIndexes.indexOf(rand)>-1){
-      rand = getRand(this.totalCards);
+    function getRand(num) {return (Math.round(Math.random() * (num-1)));}
+    var tempDeck = [];
+    var usedIndexes = [];
+    var rand = getRand(this.totalCards);
+    for (var i = 0; i < this.totalCards; i++){
+      while(usedIndexes.indexOf(rand)>-1){
+        rand = getRand(this.totalCards);
+      }
+      tempDeck.push(this.deck[rand]);
+      usedIndexes.push(rand);
     }
-    tempDeck.push(this.deck[rand]);
-    usedIndexes.push(rand);
-  }
-  this.deck = tempDeck;
-},
+    this.deck = tempDeck;
+  },
 } // End of gameCards object
 
 //////////////////////////////////////////////
@@ -441,6 +441,7 @@ function flip(event){
 // Handles keyboard event on player.
 function movePlayer(event){
   switch (event.keyCode){
+    // NHO: clever mapping!
     case (87): player.move("up"); break;
     case (83): player.move("down"); break;
     case (65): player.move("left"); break;
@@ -465,6 +466,7 @@ function updateDomDisplay(){
 }
 
 // Updates DOM Card display for flashing cards
+// NHO: not sure if this is deliberate or not, but flashing temporarily interupts game / ability to check cards again
 function updateFlashing(){
   if(gameCards.bFlashing){
     if( gameTime > flashingCards.endTime){
@@ -510,7 +512,6 @@ function display(){
   document.getElementsByClassName("enemy")[0].style.left = enemy.x + enemy.xOffset + "px";
 }
 
-
 // Performs necessary functions for updating/displaying the game world.
 // this is the where the magic happens.
 function gameLoop(){
@@ -541,15 +542,13 @@ function initGame(){
   var endScreen = document.getElementsByClassName("endScreen")[0];
   endScreen.style.visibility = "hidden";
 
-  // TODO doesnt work.
+  // TODO doesnt work. // NHO: would move to seperate branch
   //if(endScreen.childNodes.length>1){endScreen.removeChild(endScreen.childNodes.length); endScreen.removeChild(endScreen.childNodes.length);}
 
   gameCards.buildDeck(true);
   collisionGrid.buildGrid();
   player.init();
   enemy.init();
-
-
 }
 
 ///////////////////////////
@@ -561,3 +560,19 @@ initGame();
 buildDOM();
 
 setInterval(gameLoop, 30);
+
+// NHO: Some really solid code here Ryan!
+
+// Couple things right away: I had to timebox this, so there was no way for me to get to all of it;
+// also while well commented, some of the code induces complexity that I couldn't easily understand.
+// That being said, the more I played with the game and read the code, I got a much better idea what was going on,
+// and I provided some feedback on areas where I hope you can come back to and refactor / simplify / expand.
+
+//  Some things to focus on for the future:
+  // code organization: for a game this large, it might help to break up some of your JS into seperate files,
+    // or come up with a group of helpers that can be seperated out of the whole game logic.
+    // Also, would greatly help with readability / code maintability.
+  // Another theme that comes to mind is simplicity: start with the simplest implementation of a feature first
+  // get it to work, then come back and on another branch, start vamping up complexity and worring about fringe cases.
+
+// Overall, this was a really cool creative idea, and would love to see you continue to build on this, and hope you publish it!
