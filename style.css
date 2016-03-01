@@ -62,10 +62,8 @@ body {
 }
 
 .endScreen p{
-
   font-size: 200px;
   color: red;
-
 }
 
 .restart {
@@ -73,3 +71,8 @@ body {
   height: 50px;
   font-size: 40px;
 }
+
+/* NHO: really like your creativity with the design and layout */
+/* Something to consider is how you could utilize media queries to adjust to update display based on viewport */
+/* also, to that point. If you are looking to stay ahead of the game with responsive web design
+would recommend looking into other units of measurement other than px, such as em or vh */

@@ -24,9 +24,9 @@ hindered functional implementation of this goal.
 
 ### Installation
 
-Either goto: [http://rkrolick.github.io/wdi_project1/](http://rkrolick.github.io/wdi_project1/)
+Either go to: [http://rkrolick.github.io/wdi_project1/](http://rkrolick.github.io/wdi_project1/)
 
-Or goto: [https://github.com/rkrolick/wdi_project1](https://github.com/rkrolick/wdi_project1)
+Or go to: [https://github.com/rkrolick/wdi_project1](https://github.com/rkrolick/wdi_project1)
 Download files to local repository.
 Open index.html in Chrome.
 
