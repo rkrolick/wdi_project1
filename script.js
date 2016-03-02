@@ -50,10 +50,7 @@ var player = {
   y: P_START_Y,
   xOffset: P_OFFSET_X,  // Used by display functon to correctly position player based the offset of cardArea.
   yOffset: P_OFFSET_Y, // Used by display functon to correctly position player based the offset of cardArea.
-  //gridX: null,
-  //gridY: null,
   onNode: null,
-  //transitionNode: null, // When moving between Nodes  account for both.
   bInLineWithGrid: true,
   size: P_SIZE,
   speed: P_SPEED,
@@ -77,11 +74,12 @@ var player = {
 
     this.updateGridPos();
   },
-
+  // TODO: not sure if this works correctly. Should update player's current node location via pixel coordinates.
   updateGridPos: function(){
     this.onNode = collisionGrid.getNode(this.x , this.y);
   },
 
+  // TODO: not working correctly.  Should checks to see if an intended move is a valid one.
   checkCollision: function(direction){
     var corner1;
     var corner2;
@@ -119,6 +117,7 @@ var player = {
     }
   },
 
+  // TODO: returns an array of node values adjacent to the player's node.  Sorted by [left, right, below, above]
   adjacentCards: function(){
     var adjCards = [];
 
@@ -164,16 +163,14 @@ var enemy = {
     this.updateGridPos();
   },
 
+  //  TODO: Double check results.  Should call chooseNode only if aligned to collision grid.  Otherwise repeat previous move.
   decideMove: function(){
     if(collisionGrid.isAligned(this.x, this.y)){
       this.move(this.chooseNode());}
     else{this.move(this.previousMove);}
-    //if(collisionGrid.valueAt(this.onNode-1)==null){this.previousMove = "left"; this.move("left"); return;}
-    //this.move("right"); return;
-    //if(collisionGrid.valueAt(this.onNode-31)==null){this.previousMove = "up"; this.move("up");}
-
   },
 
+  //  TODO: Improve.  Currently only chooses a direction randomly.
   chooseNode: function(){
     function getRand(num) {return (Math.round(Math.random() * (num-1)));}
     switch (getRand(4)){
@@ -183,18 +180,14 @@ var enemy = {
     case (3): return "down";
     default: return "up";
     }
-    //if(collisionGrid.valueAt(onNode-31)==null){return "up";}//above
-    //collisionGrid.valueAt(onNode+31) //below
-    //collisionGrid.valueAt(onNode-1)  // left
-    //collisionGrid.valueAt(onNode+1)  //right
   },
 
+  // TODO: not sure if this works correctly. Should update enemy's current node location via pixel coordinates.
   updateGridPos: function(){
     this.onNode = collisionGrid.getNode(this.x , this.y);
   },
 
-
-
+  // TODO: not working correctly.  Should checks to see if an intended move is a valid one.
   checkCollision: function(direction){
     var corner1;
     var corner2;
@@ -232,6 +225,7 @@ var enemy = {
     }
   },
 
+  // TODO: returns an array of node values adjacent to the enemy's node.  Sorted by [left, right, below, above]
   adjacentCards: function(){
     var adjCards = [];
 
@@ -241,8 +235,6 @@ var enemy = {
     adjCards.push(collisionGrid.valueAt(this.onNode - 1)); // left TODO: technically doesnt give correct results
 
     return adjCards;
-
-
   }
 }
 
@@ -290,6 +282,7 @@ var collisionGrid = {
     return 666;
   },
 
+  // TODO: Double check results.
   isAligned: function(x, y){
     if (((x % 60) == 0) && ((y % 60) == 0)) {return true;}else{return false;}
   }
@@ -380,20 +373,10 @@ var gameCards = {
 
       return;
     }
-    // Check for a elevator and powercell match. If found, deactive the cards.
-    /*if ((this.deck[i].type == this.cardTypes[0]) || (this.deck[i].type == this.cardTypes[1])){
-      if ((this.deck[j].type == this.cardTypes[0]) || (this.deck[j].type == this.cardTypes[1])){
-        this.deck[i].bActive = false;
-        this.deck[j].bActive = false;
-        flashingCards.matchType = this.cardTypes[0];
-        matches ++;
-        return;
-      }
-    }*/
-    // No match found.
     flashingCards.matchType = 0;
   },
 
+  //Randomly position card objects within the deck.
   shuffleCards: function(){
   function getRand(num) {return (Math.round(Math.random() * (num-1)));}
   var tempDeck = [];
@@ -473,6 +456,7 @@ function updateFlashing(){
       flashingCards.reset();
     }
     else{
+      // TODO: Refine this.
       if(((flashingCards.startTime < gameTime) && (gameTime < flashingCards.startTime + 300))
         || ((flashingCards.startTime + 600 < gameTime) && (gameTime < flashingCards.startTime + 900))
         || ((flashingCards.startTime + 1200 < gameTime) && (gameTime < flashingCards.startTime + 1500))
@@ -512,7 +496,7 @@ function display(){
 
 
 // Performs necessary functions for updating/displaying the game world.
-// this is the where the magic happens.
+// Called by interval every 33 ms. This is the where the magic happens.
 function gameLoop(){
   if (KILL) {return;}  // Dev use only, used to stop game world updates completely.
   updateDomDisplay();
