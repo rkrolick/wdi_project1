@@ -12,7 +12,7 @@ var INCORRECT_FLASH_COLOR = "rgb(255, 0, 0)";
 // Player & Enemy constants
 var P_START_X = 0;
 var P_START_Y = 0;
-var P_OFFSET_X = 30; // TODO: Find a way to calculate this dynamically based on view port.
+var P_OFFSET_X = 8; // TODO: Find a way to calculate this dynamically based on view port.
 var P_OFFSET_Y = 8; // TODO: Find a way to calculate this dynamically based on view port.
 var P_SIZE = 60;
 var P_SPEED = 15;
